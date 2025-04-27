@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA משולבת</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2196F3"/>
+
+    <style>
+        /* קוד CSS להגדרת מראה האפליקציה */
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding-bottom: 60px; /* כדי שהפוטר לא יסתיר תוכן */
+        }
+
+        header {
+            background-color: #2196F3;
+            color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 1rem;
+        }
+
+        footer {
+            margin-top: 2rem;
+            padding: 1rem 0;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        #status {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ברוכים הבאים ל-PWA משולבת</h1>
+    </header>
+    <main>
+        <p>זוהי אפליקציית ווב הניתנת להתקנה עם קוד משולב.</p>
+        <p>בדוק את הסטטוס למטה (יעבוד רק בשרת ווב).</p>
+        <p id="status">סטטוס חיבור:</p>
+    </main>
+    <footer>
+        <p>&copy; 2023 PWA לדוגמה</p>
+    </footer>
+
+    <script>
+        /* קוד JavaScript לפונקציונליות הדף ורישום ה-Service Worker */
+
+        // רישום ה-Service Worker - שימו לב: מפנה לקובץ sw.js נפרד!
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        } else {
+             console.log('Service Workers are not supported in this browser.');
+        }
+
+        // בדיקת סטטוס חיבור ועדכון אלמנט ב-HTML
+        const statusElement = document.getElementById('status');
+
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                statusElement.textContent = 'סטטוס חיבור: מקוון';
+            } else {
+                statusElement.textContent = 'סטטוס חיבור: לא מקוון (אפליקציה עשויה לעבוד במצב אופליין אם נשמרה במטמון)';
+            }
+        }
+
+        // האזנה לאירועי שינוי סטטוס חיבור
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // עדכון ראשוני של הסטטוס בעת טעינת הדף
+        updateOnlineStatus();
+    </script>
+</body>
+</html>
